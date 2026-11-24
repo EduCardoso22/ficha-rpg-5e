@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Platform, View } from 'react-native';
 
 import { OtaUpdateBanner } from '@/components/OtaUpdateBanner';
+import { TutorialModal } from '@/components/TutorialModal';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { observeAuth } from '@/services/auth';
@@ -60,6 +61,7 @@ export default function RootLayout() {
     <ThemeProvider value={theme}>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <OtaUpdateBanner />
+      <TutorialModal />
       <Stack>
         <Stack.Protected guard={!user}>
           <Stack.Screen name="login" options={{ headerShown: false }} />

@@ -155,6 +155,19 @@ Para que o `deploy.yml` e o `build-android.yml` funcionem automaticamente no Git
 
 ---
 
+## Contribuindo com Ideias e Feedback
+
+Sugestões de novos recursos, melhorias de usabilidade ou correções de bugs são muito bem-vindas, mesmo que você não programe.
+
+### Como enviar sua ideia
+1. Acesse a aba **Issues** aqui no repositório do GitHub.
+2. Clique em **New issue** e selecione o modelo **Sugestão de Ideia ou Melhoria**.
+3. Descreva o que você gostaria de ver no app ou no site e como isso ajudaria na sua mesa de RPG.
+
+Se preferir contribuir com código, fique à vontade para abrir um Pull Request com a descrição da mudança.
+
+---
+
 ## Licença
 
 Consulte o arquivo [LICENSE](LICENSE) neste repositório.

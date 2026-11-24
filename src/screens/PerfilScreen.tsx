@@ -48,6 +48,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useDiceStore } from '@/store/useDiceStore';
 import { useFichaStore } from '@/store/useFichaStore';
 import { ThemePreference, useThemeStore } from '@/store/useThemeStore';
+import { useTutorialStore } from '@/store/useTutorialStore';
 
 const OPCOES: { v: ThemePreference; label: string; icone: keyof typeof Ionicons.glyphMap }[] = [
   { v: 'system', label: 'Sistema', icone: 'phone-portrait-outline' },
@@ -92,6 +93,7 @@ export default function PerfilScreen() {
   const codigoMesaAtiva = useDiceStore((s) => s.codigoMesa);
   const conectarMesa = useDiceStore((s) => s.conectarMesa);
   const { preference, setPreference, palette, setPalette } = useThemeStore();
+  const abrirTutorial = useTutorialStore((s) => s.abrirTutorial);
 
   const [perfil, setPerfil] = useState<PerfilUsuario | null>(null);
   const [editandoPerfil, setEditandoPerfil] = useState(false);
@@ -667,11 +669,17 @@ export default function PerfilScreen() {
         </Card>
 
         <Card>
-          <SectionTitle>Sobre o App e Atualizações</SectionTitle>
+          <SectionTitle>Sobre o App e Ajuda</SectionTitle>
           <Txt bold style={{ fontSize: 16, marginBottom: 4 }}>Fichas D&D (5e)</Txt>
-          <Txt style={{ color: t.textSecondary, fontSize: 14 }}>
+          <Txt style={{ color: t.textSecondary, fontSize: 14, marginBottom: 12 }}>
             Desenvolvido por Eduardo Cardoso Oliveira.
           </Txt>
+          <Button
+            title="Refazer Tutorial do App"
+            icon="compass-outline"
+            variant="ghost"
+            onPress={abrirTutorial}
+          />
           <Pressable
             onPress={() => Linking.openURL('https://instagram.com/Edu0_22_')}
             style={styles.instaBtn}>
