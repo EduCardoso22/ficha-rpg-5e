@@ -20,12 +20,6 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Configurar Expo CLI / EAS
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
       - name: Instalar dependencias
         run: npm ci
 
@@ -48,8 +42,10 @@ jobs:
       - name: Publicar no Firebase Hosting e atualizar Firestore Rules
         run: |
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > /tmp/firebase-sa.json
-          GOOGLE_APPLICATION_CREDENTIALS=/tmp/firebase-sa.json npx firebase-tools deploy --only firestore:rules,hosting --non-interactive
+          GOOGLE_APPLICATION_CREDENTIALS=/tmp/firebase-sa.json npx --yes firebase-tools deploy --only firestore:rules,hosting --non-interactive
           rm -f /tmp/firebase-sa.json
 
       - name: Enviar atualizacao OTA para o App Android (EAS Update)
-        run: eas update --channel preview --non-interactive --message "Deploy automatico via GitHub (${{ github.sha }})"
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: npx --yes eas-cli@latest update --channel preview --non-interactive --message "Deploy automatico via GitHub (${{ github.sha }})"
