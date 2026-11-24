@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Alert,
   Linking,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -20,6 +21,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, Card, IconButton, Label, SectionTitle, Txt } from '@/components/ficha-ui';
+import { TutorialTarget } from '@/components/TutorialTarget';
 import {
   AccentPaletteKey,
   AccentPalettes,
@@ -28,6 +30,7 @@ import {
   MaxDesktopWidth,
 } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { excluirContaCompleta, traduzErroAuth } from '@/services/auth';
 import { compartilharCom } from '@/services/fichas';
 import {
   AVATARES_RPG,
@@ -119,6 +122,14 @@ export default function PerfilScreen() {
   const [buscaAmigo, setBuscaAmigo] = useState('');
   const [adicionandoAmigo, setAdicionandoAmigo] = useState(false);
   const [sincronizandoAmigos, setSincronizandoAmigos] = useState(false);
+
+  // Exclusão de conta com confirmação dupla
+  const [modalExcluirOpen, setModalExcluirOpen] = useState(false);
+  const [textoConfirmacao, setTextoConfirmacao] = useState('');
+  const [senhaExcluir, setSenhaExcluir] = useState('');
+  const [precisaSenha, setPrecisaSenha] = useState(false);
+  const [excluindoConta, setExcluindoConta] = useState(false);
+  const [erroExcluir, setErroExcluir] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -332,20 +343,22 @@ export default function PerfilScreen() {
           </View>
 
           {/* Código de Amigo */}
-          <View style={[styles.friendCodeBar, { backgroundColor: t.backgroundElement, borderColor: t.border }]}>
-            <View style={{ flex: 1 }}>
-              <Label style={{ marginBottom: 0 }}>SEU CÓDIGO DE AMIGO</Label>
-              <Txt bold style={{ fontSize: 16, letterSpacing: 1, color: t.primary }}>
-                {pAtual.codigoAmigo}
-              </Txt>
+          <TutorialTarget id="perfil-amigos">
+            <View style={[styles.friendCodeBar, { backgroundColor: t.backgroundElement, borderColor: t.border }]}>
+              <View style={{ flex: 1 }}>
+                <Label style={{ marginBottom: 0 }}>SEU CÓDIGO DE AMIGO</Label>
+                <Txt bold style={{ fontSize: 16, letterSpacing: 1, color: t.primary }}>
+                  {pAtual.codigoAmigo}
+                </Txt>
+              </View>
+              <Pressable
+                onPress={copiarCodigoAmigo}
+                style={[styles.copyChip, { borderColor: t.primary, backgroundColor: t.backgroundSelected }]}>
+                <Ionicons name="copy-outline" size={14} color={t.primary} />
+                <Txt bold style={{ fontSize: 12, color: t.primary }}>Copiar código</Txt>
+              </Pressable>
             </View>
-            <Pressable
-              onPress={copiarCodigoAmigo}
-              style={[styles.copyChip, { borderColor: t.primary, backgroundColor: t.backgroundSelected }]}>
-              <Ionicons name="copy-outline" size={14} color={t.primary} />
-              <Txt bold style={{ fontSize: 12, color: t.primary }}>Copiar código</Txt>
-            </Pressable>
-          </View>
+          </TutorialTarget>
 
           {/* Formulário de Edição do Perfil */}
           {editandoPerfil ? (
@@ -622,74 +635,198 @@ export default function PerfilScreen() {
         </Card>
 
         {/* CARD DE APARÊNCIA (TEMA + PALETA DE CORES PERSONALIZÁVEL) */}
-        <Card>
-          <SectionTitle>Aparência e Paleta de Cores</SectionTitle>
-          <Label style={{ marginBottom: 8 }}>Modo de exibição</Label>
-          <View style={styles.row}>
-            {OPCOES.map((o) => {
-              const ativo = preference === o.v;
-              return (
-                <Pressable
-                  key={o.v}
-                  onPress={() => setPreference(o.v)}
-                  style={[
-                    styles.opt,
-                    { borderColor: t.primary, backgroundColor: ativo ? t.primary : 'transparent' },
-                  ]}>
-                  <Ionicons name={o.icone} size={18} color={ativo ? t.onPrimary : t.text} />
-                  <Txt bold style={{ color: ativo ? t.onPrimary : t.text }}>
-                    {o.label}
-                  </Txt>
-                </Pressable>
-              );
-            })}
-          </View>
+        <TutorialTarget id="perfil-aparencia">
+          <Card>
+            <SectionTitle>Aparência e Paleta de Cores</SectionTitle>
+            <Label style={{ marginBottom: 8 }}>Modo de exibição</Label>
+            <View style={styles.row}>
+              {OPCOES.map((o) => {
+                const ativo = preference === o.v;
+                return (
+                  <Pressable
+                    key={o.v}
+                    onPress={() => setPreference(o.v)}
+                    style={[
+                      styles.opt,
+                      { borderColor: t.primary, backgroundColor: ativo ? t.primary : 'transparent' },
+                    ]}>
+                    <Ionicons name={o.icone} size={18} color={ativo ? t.onPrimary : t.text} />
+                    <Txt bold style={{ color: ativo ? t.onPrimary : t.text }}>
+                      {o.label}
+                    </Txt>
+                  </Pressable>
+                );
+              })}
+            </View>
 
-          <Label style={{ marginTop: 14, marginBottom: 8 }}>Cor Principal do App e Site</Label>
-          <View style={styles.paletteGrid}>
-            {PALETAS_LISTA.map(([key, pal]) => {
-              const ativo = palette === key;
-              return (
-                <Pressable
-                  key={key}
-                  onPress={() => setPalette(key)}
-                  style={[
-                    styles.paletteChip,
-                    {
-                      borderColor: ativo ? pal.dark : t.border,
-                      backgroundColor: ativo ? t.backgroundSelected : 'transparent',
-                    },
-                  ]}>
-                  <View style={[styles.swatch, { backgroundColor: pal.dark }]} />
-                  <Txt bold={ativo} style={{ fontSize: 13 }}>{pal.nome}</Txt>
-                </Pressable>
-              );
-            })}
-          </View>
-        </Card>
+            <Label style={{ marginTop: 14, marginBottom: 8 }}>Cor Principal do App e Site</Label>
+            <View style={styles.paletteGrid}>
+              {PALETAS_LISTA.map(([key, pal]) => {
+                const ativo = palette === key;
+                return (
+                  <Pressable
+                    key={key}
+                    onPress={() => setPalette(key)}
+                    style={[
+                      styles.paletteChip,
+                      {
+                        borderColor: ativo ? pal.dark : t.border,
+                        backgroundColor: ativo ? t.backgroundSelected : 'transparent',
+                      },
+                    ]}>
+                    <View style={[styles.swatch, { backgroundColor: pal.dark }]} />
+                    <Txt bold={ativo} style={{ fontSize: 13 }}>{pal.nome}</Txt>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </Card>
+        </TutorialTarget>
 
-        <Card>
-          <SectionTitle>Sobre o App e Ajuda</SectionTitle>
-          <Txt bold style={{ fontSize: 16, marginBottom: 4 }}>Fichas D&D (5e)</Txt>
-          <Txt style={{ color: t.textSecondary, fontSize: 14, marginBottom: 12 }}>
-            Desenvolvido por Eduardo Cardoso Oliveira.
+        <TutorialTarget id="perfil-ajuda">
+          <Card>
+            <SectionTitle>Sobre o App e Ajuda</SectionTitle>
+            <Txt bold style={{ fontSize: 16, marginBottom: 4 }}>Fichas D&D (5e)</Txt>
+            <Txt style={{ color: t.textSecondary, fontSize: 14, marginBottom: 12 }}>
+              Desenvolvido por Eduardo Cardoso Oliveira.
+            </Txt>
+            <Button
+              title="Refazer Tutorial do App"
+              icon="compass-outline"
+              variant="ghost"
+              onPress={abrirTutorial}
+            />
+            <Pressable
+              onPress={() => Linking.openURL('https://github.com/EduCardoso22/ficha-rpg-5e')}
+              style={styles.instaBtn}>
+              <Ionicons name="logo-github" size={18} color={t.primary} />
+              <Txt bold style={{ color: t.primary, fontSize: 14 }}>
+                GitHub (Sugerir ideias e edições)
+              </Txt>
+            </Pressable>
+            <Pressable
+              onPress={() => Linking.openURL('https://instagram.com/Edu0_22_')}
+              style={styles.instaBtn}>
+              <Ionicons name="logo-instagram" size={18} color={t.primary} />
+              <Txt bold style={{ color: t.primary, fontSize: 14 }}>
+                Instagram @Edu0_22_
+              </Txt>
+            </Pressable>
+          </Card>
+        </TutorialTarget>
+
+        <Card style={{ borderColor: t.danger }}>
+          <SectionTitle>Conta</SectionTitle>
+          <Txt style={{ color: t.textSecondary, fontSize: 13, marginBottom: 10 }}>
+            Ao excluir sua conta, todas as suas fichas, amizades e dados de perfil serão apagados permanentemente do banco de dados.
           </Txt>
           <Button
-            title="Refazer Tutorial do App"
-            icon="compass-outline"
-            variant="ghost"
-            onPress={abrirTutorial}
+            title="Excluir Minha Conta"
+            icon="trash-outline"
+            variant="danger"
+            onPress={() => {
+              setTextoConfirmacao('');
+              setSenhaExcluir('');
+              setPrecisaSenha(false);
+              setErroExcluir(null);
+              setModalExcluirOpen(true);
+            }}
           />
-          <Pressable
-            onPress={() => Linking.openURL('https://instagram.com/Edu0_22_')}
-            style={styles.instaBtn}>
-            <Ionicons name="logo-instagram" size={18} color={t.primary} />
-            <Txt bold style={{ color: t.primary, fontSize: 14 }}>
-              Instagram @Edu0_22_
-            </Txt>
-          </Pressable>
         </Card>
       </ScrollView>
+
+      <Modal
+        visible={modalExcluirOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          if (!excluindoConta) setModalExcluirOpen(false);
+        }}>
+        <View style={styles.deleteOverlay}>
+          <View style={[styles.deleteCard, { backgroundColor: t.backgroundElement, borderColor: t.danger }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Ionicons name="warning" size={22} color={t.danger} />
+              <Txt bold style={{ fontSize: 18, color: t.danger, flex: 1 }}>
+                Excluir Conta Permanentemente
+              </Txt>
+            </View>
+
+            <Txt style={{ fontSize: 14, lineHeight: 20 }}>
+              Esta ação não pode ser desfeita. Todas as suas fichas, solicitações de amizade e perfil serão removidos do banco de dados.
+            </Txt>
+
+            <Label style={{ marginBottom: 4 }}>
+              Digite EXCLUIR para confirmar:
+            </Label>
+            <TextInput
+              value={textoConfirmacao}
+              onChangeText={setTextoConfirmacao}
+              placeholder="EXCLUIR"
+              placeholderTextColor={t.textSecondary}
+              autoCapitalize="characters"
+              style={[styles.input, { borderColor: t.border, backgroundColor: t.input, color: t.text }]}
+            />
+
+            {!user?.isAnonymous && user?.email && precisaSenha ? (
+              <>
+                <Label style={{ marginTop: 6, marginBottom: 4 }}>
+                  Informe sua senha atual para confirmar:
+                </Label>
+                <TextInput
+                  value={senhaExcluir}
+                  onChangeText={setSenhaExcluir}
+                  placeholder="Sua senha"
+                  placeholderTextColor={t.textSecondary}
+                  secureTextEntry
+                  style={[styles.input, { borderColor: t.border, backgroundColor: t.input, color: t.text }]}
+                />
+              </>
+            ) : null}
+
+            {erroExcluir ? (
+              <Txt style={{ color: t.danger, fontSize: 13 }}>{erroExcluir}</Txt>
+            ) : null}
+
+            <View style={styles.row}>
+              <View style={{ flex: 1 }}>
+                <Button
+                  title="Cancelar"
+                  variant="ghost"
+                  disabled={excluindoConta}
+                  onPress={() => setModalExcluirOpen(false)}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Button
+                  title={excluindoConta ? 'Excluindo...' : 'Confirmar Exclusão'}
+                  variant="danger"
+                  disabled={
+                    excluindoConta ||
+                    textoConfirmacao.trim().toUpperCase() !== 'EXCLUIR' ||
+                    (precisaSenha && !senhaExcluir)
+                  }
+                  onPress={async () => {
+                    setErroExcluir(null);
+                    setExcluindoConta(true);
+                    try {
+                      await excluirContaCompleta(senhaExcluir || undefined);
+                      setModalExcluirOpen(false);
+                    } catch (e) {
+                      const code = (e as { code?: string })?.code ?? '';
+                      if (code === 'auth/requires-recent-login') {
+                        setPrecisaSenha(true);
+                      }
+                      setErroExcluir(traduzErroAuth(e));
+                    } finally {
+                      setExcluindoConta(false);
+                    }
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -797,4 +934,20 @@ const styles = StyleSheet.create({
   },
   swatch: { width: 16, height: 16, borderRadius: 8 },
   instaBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10, paddingVertical: 4 },
+  deleteOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.68)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  deleteCard: {
+    width: '100%',
+    maxWidth: 420,
+    borderRadius: 20,
+    borderWidth: 2,
+    padding: 18,
+    gap: 10,
+    elevation: 10,
+  },
 });

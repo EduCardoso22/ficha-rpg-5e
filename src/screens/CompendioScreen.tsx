@@ -16,6 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, Card, Label, Txt } from '@/components/ficha-ui';
+import { TutorialTarget } from '@/components/TutorialTarget';
 import { DesktopBreakpoint, MaxContentWidth, MaxDesktopWidth } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import {
@@ -300,7 +301,7 @@ export default function CompendioScreen() {
             })}
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <TutorialTarget id="compendio-busca" style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <View style={[styles.search, { flex: 1, borderColor: t.border, backgroundColor: t.input }]}>
               <Ionicons name="search" size={18} color={t.textSecondary} />
               <TextInput
@@ -346,7 +347,7 @@ export default function CompendioScreen() {
                 color={mostrarFiltros ? t.onPrimary : t.textSecondary}
               />
             </Pressable>
-          </View>
+          </TutorialTarget>
 
           {mostrarFiltros ? (
             <View style={{ gap: 6, paddingVertical: 4 }}>

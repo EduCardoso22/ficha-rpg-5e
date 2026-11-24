@@ -19,6 +19,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, Card, IconButton, Label, SectionTitle, Txt } from '@/components/ficha-ui';
+import { TutorialTarget } from '@/components/TutorialTarget';
 import { DesktopBreakpoint, MaxContentWidth, MaxDesktopWidth } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -218,7 +219,7 @@ export default function FichasScreen() {
                 Minhas Fichas e Campanhas
               </Txt>
             </View>
-            <View style={styles.heroActions}>
+            <TutorialTarget id="fichas-nova" style={styles.heroActions}>
               <Button title="Nova Ficha" icon="add-circle-outline" onPress={() => router.push('/nova-ficha')} />
               <Button
                 title="Importar"
@@ -252,7 +253,7 @@ export default function FichasScreen() {
                   Mestre
                 </Text>
               </Pressable>
-            </View>
+            </TutorialTarget>
           </View>
         </View>
 

@@ -1,17 +1,21 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
+  EmailAuthProvider,
   onAuthStateChanged,
+  reauthenticateWithCredential,
   sendPasswordResetEmail,
   signInAnonymously,
   signInWithEmailAndPassword,
   signOut,
   User,
 } from 'firebase/auth';
+import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 
-import { useAuthStore } from '@/store/useAuthStore';
+import { LOCAL_GUEST_UID, useAuthStore } from '@/store/useAuthStore';
 
-import { auth } from './firebase';
+import { auth, db } from './firebase';
 
 const GUEST_STORAGE_KEY = 'auth:guest-session';
 
@@ -54,6 +58,58 @@ export async function logout() {
   await signOut(auth).catch(() => {});
 }
 
+/**
+ * Exclui todos os dados do usuário no Firestore (fichas, amizades e perfil),
+ * limpa registros locais e remove a conta do Firebase Auth.
+ */
+export async function excluirContaCompleta(senha?: string): Promise<void> {
+  const storeUser = useAuthStore.getState().user;
+  const current = auth.currentUser;
+  const uid = current?.uid ?? storeUser?.uid;
+
+  if (!uid) {
+    throw new Error('Nenhum usuário autenticado encontrado.');
+  }
+
+  // Se houver usuário real no Firebase Auth e senha informada, reautentica antes de apagar o banco
+  if (current && !current.isAnonymous && current.email && senha) {
+    const cred = EmailAuthProvider.credential(current.email, senha);
+    await reauthenticateWithCredential(current, cred);
+  }
+
+  // Convidado local (sem Firebase Auth): limpa apenas o armazenamento local
+  if (uid === LOCAL_GUEST_UID && !current) {
+    await AsyncStorage.removeItem(GUEST_STORAGE_KEY).catch(() => {});
+    await AsyncStorage.removeItem(`tutorial_visto_${uid}`).catch(() => {});
+    useAuthStore.getState().setUser(null);
+    return;
+  }
+
+  // 1. Apagar todas as fichas do usuário
+  const fichasSnap = await getDocs(query(collection(db, 'fichas'), where('ownerId', '==', uid)));
+  await Promise.all(fichasSnap.docs.map((d) => deleteDoc(d.ref)));
+
+  // 2. Apagar todas as amizades/solicitações do usuário
+  const amizadesSnap = await getDocs(
+    query(collection(db, 'amizades'), where('uids', 'array-contains', uid)),
+  );
+  await Promise.all(amizadesSnap.docs.map((d) => deleteDoc(d.ref)));
+
+  // 3. Apagar perfil do usuário
+  await deleteDoc(doc(db, 'perfis', uid)).catch(() => {});
+
+  // 4. Limpar flags locais (ex.: tutorial visto)
+  await AsyncStorage.removeItem(GUEST_STORAGE_KEY).catch(() => {});
+  await AsyncStorage.removeItem(`tutorial_visto_${uid}`).catch(() => {});
+
+  // 5. Excluir conta no Firebase Auth
+  if (current) {
+    await deleteUser(current);
+  }
+
+  useAuthStore.getState().setUser(null);
+}
+
 export function traduzErroAuth(e: unknown): string {
   const code = (e as { code?: string })?.code ?? '';
   if (code === 'auth/user-not-found' || code === 'auth/invalid-credential') {
@@ -66,6 +122,7 @@ export function traduzErroAuth(e: unknown): string {
     'auth/weak-password': 'Senha fraca (mínimo 6 caracteres).',
     'auth/network-request-failed': 'Sem conexão com a internet.',
     'auth/too-many-requests': 'Muitas tentativas. Tente novamente mais tarde.',
+    'auth/requires-recent-login': 'Por segurança, informe sua senha atual para confirmar a exclusão.',
   };
   return map[code] ?? 'Não foi possível autenticar.';
 }
