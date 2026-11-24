@@ -3,6 +3,13 @@ name: Deploy - Site Web, Firestore Rules e OTA Mobile
 on:
   push:
     branches: [master, main]
+    paths-ignore:
+      - "*.md"
+      - "LICENSE"
+      - ".gitignore"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/build-android.yml"
   workflow_dispatch:
 
 jobs:
