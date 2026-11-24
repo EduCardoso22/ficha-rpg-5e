@@ -13,7 +13,7 @@ Acesse diretamente pelo navegador (sem precisar instalar nada), com layout respo
 * **Site oficial:** https://fichas-5e.web.app
 
 ### 2. Aplicativo Android (.apk)
-* **Download do APK (Google Drive):** <a href="https://drive.google.com/file/d/1pPpZDRoGo4JvOsvHmlp9hR_ksujrqNVU/view?usp=sharing"  target="blank">Clique aqui!</a>
+* **Download do APK (Google Drive):** <a href="https://drive.google.com/file/d/1RJ5Ufu94ekGsabk9pJpagazWOLECcK5Q/view?usp=sharing"  target="blank">Clique aqui!</a>
 * **Como instalar no Android:**
   1. Baixe o arquivo `.apk` pelo link do Google Drive acima.
   2. Ao abrir o arquivo, caso o Android peça permissão, habilite **"Permitir instalação de fontes desconhecidas"** para o navegador ou gerenciador de arquivos.
