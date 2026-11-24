@@ -1,0 +1,28 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyDMc7XMNwq6_VJUMEPCqcBwvGfgNLyRvQ8",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "fichas-5e.firebaseapp.com",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "fichas-5e",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "fichas-5e.firebasestorage.app",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "867949156154",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:867949156154:web:39dd7ecc9c8f2c6dc3a203",
+        "EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID": "G-TR19ZZG2QV"
+      }
+    },
+    "production": {
+      "channel": "production",
+      "autoIncrement": true
+    }
+  }
+}

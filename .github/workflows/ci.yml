@@ -1,0 +1,31 @@
+name: CI - Validacao de Codigo
+
+on:
+  push:
+    branches: [master, main, "feat/**"]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  validate:
+    name: Typecheck, Lint e Build Web
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Verificar tipos (TypeScript)
+        run: npx tsc --noEmit
+
+      - name: Verificar lint (Expo ESLint)
+        run: npx expo lint

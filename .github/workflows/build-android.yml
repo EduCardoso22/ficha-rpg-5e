@@ -1,0 +1,43 @@
+name: Build Android APK (EAS Build)
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "Perfil de build do eas.json (preview = APK interno, production = Play Store)"
+        required: true
+        default: "preview"
+        type: choice
+        options:
+          - preview
+          - production
+
+jobs:
+  build-android:
+    name: Gerar Build Android na Nuvem Expo
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Configurar Expo CLI / EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Iniciar Build Android no EAS
+        run: eas build --platform android --profile ${{ inputs.profile || 'preview' }} --non-interactive --no-wait

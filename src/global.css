@@ -1,9 +1,69 @@
+@font-face {
+  font-family: 'ionicons';
+  src: url('/fonts/Ionicons-v2.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'material-community';
+  src: url('/fonts/MaterialCommunityIcons-v2.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
 :root {
-  --font-display:
-    Spline Sans, Inter, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
-    Segoe UI Symbol, Noto Color Emoji;
+  --font-display: Inter, 'Spline Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
   --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
+
+  /* Figma Design Tokens (Fichas D&D Theme) */
+  --color-bg: #0F0F12;
+  --color-surface: #1A1A1F;
+  --color-surface-selected: #2A2A31;
+  --color-input: #121216;
+  --color-primary: #E0566B;
+  --color-on-primary: #1B0B0F;
+  --color-text: #F2F0EA;
+  --color-text-secondary: #A0A0AA;
+  --color-border: #2E2E36;
+  --color-success: #66BB6A;
+  --color-danger: #EF5350;
+
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 20px;
+}
+
+/* Corrige largura intrinseca e contorno padrao dos inputs HTML na versao Web (PC) */
+input,
+textarea {
+  min-width: 0;
+  box-sizing: border-box;
+  outline: none;
+  font-family: var(--font-display);
+}
+
+/* Barra de rolagem discreta para o Site Desktop */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
 }

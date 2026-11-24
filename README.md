@@ -1,56 +1,160 @@
-# Welcome to your Expo app 👋
+# Fichas D&D (5e)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Gerenciador completo de fichas de personagem, grimório, compêndio de regras e mesa ao vivo para **Dungeons & Dragons 5ª Edição**, construído com **Expo (React Native)**, **Expo Router**, **Zustand** e **Firebase** para funcionar de forma unificada no **PC (Web)** e no **Celular (Android/iOS)**.
 
-## Get started
+Desenvolvido por **Eduardo Cardoso Oliveira** ([Instagram @Edu0_22_](https://instagram.com/Edu0_22_)).
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## Onde Acessar e Baixar
 
-2. Start the app
+### 1. Versão Web (PC e Navegador)
+Acesse diretamente pelo navegador (sem precisar instalar nada), com layout responsivo de 2 colunas no computador:
+* **Site oficial:** https://fichas-5e.web.app
 
-   ```bash
-   npx expo start
-   ```
+### 2. Aplicativo Android (.apk)
+* **Download do APK (Google Drive):** `https://drive.google.com/file/d/1pPpZDRoGo4JvOsvHmlp9hR_ksujrqNVU/view?usp=sharing`
+* **Como instalar no Android:**
+  1. Baixe o arquivo `.apk` pelo link do Google Drive acima.
+  2. Ao abrir o arquivo, caso o Android peça permissão, habilite **"Permitir instalação de fontes desconhecidas"** para o navegador ou gerenciador de arquivos.
+  3. Conclua a instalação e abra o app **Fichas D&D**.
+* **Atualizações Automáticas (OTA):**
+  * Após instalar o `.apk`, novas telas, correções e livros são baixados automaticamente via **EAS Update** sempre que você abrir o aplicativo com internet.
+  * Caso queira checar manualmente, abra o menu do seu avatar no canto superior direito e toque em **Verificar Atualizações**.
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Funcionalidades Principais
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+* **Criação Guiada de Personagens:**
+  * Passo a passo com **Array Padrão**, **Compra por Pontos (27 pts)**, **Rolagem 4d6 (descartando o menor)** ou **Modo Homebrew/Customizado**.
+  * Importação automática de bônus raciais, deslocamento, dados de vida, salvaguardas e traços iniciais.
+* **Ficha Interativa para Uso na Mesa:**
+  * Cabeçalho fixo de combate com **Pontos de Vida (+/- e segurar para +/-5)**, **CA**, **Iniciativa clicável**, **Inspiração**, **Concentração** (com aviso automático de TR de Constituição ao sofrer dano) e **Condições/Exaustão**.
+  * **Toque para Rolar:** toque em qualquer atributo, salvaguarda, perícia ou ataque para rolar `1d20 + bônus` (segure para rolar com Vantagem) e rolar dano direto pelo banner de resultado.
+  * Bandeja de dados livre flutuante (`d4` a `d100` e fórmulas customizadas como `8d6+3`).
+  * Controle de **Recursos de Classe** (Fúria, Ki, Surto, etc.) com reset automático no **Descanso Curto** ou **Descanso Longo**.
+  * Inventário com controle de **Sintonização (3/3)**, capacidade de carga, moedas (`PC, PP, PE, PO, PL`), criação rápida de ataque a partir de armas e card de **Companheiros / Familiar / Forma Selvagem**.
+* **Grimório e Conjuração Inteligente:**
+  * Cálculo automático de CD de Magia, Bônus de Ataque Mágico e espaços de magia por classe e nível.
+  * Botão **Conjurar** com suporte a **Upcasting**, **Ritual**, desconto automático do espaço, ativação automática de Concentração e chips clicáveis para rolar os dados descritos na magia.
+* **Compêndio D&D 5e Integrado (Busca Bilíngue PT-BR e EN):**
+  * Consome dados em JSON diretamente dos repositórios do **5etools** (Oficiais WotC e Suplementos Famosos de Terceiros, incluindo **Humblewood**, **Tal'Dorei Reborn / Blood Hunter**, **Grim Hollow**, **Dungeons of Drakkenheim**, **Kobold Press: Tome of Heroes**, **Valda's Spire of Secrets** e **MCDM: Illrigger**).
+  * Permite pesquisar termos em português (ex.: *Bola de Fogo*, *Corvo*, *Bruxo*) e adicionar Talentos, Itens e Criaturas do Bestiário direto para a ficha aberta.
+* **Sala de Mesa ao Vivo e Escudo do Mestre:**
+  * Compartilhe sua ficha em modo leitura com o Mestre ou conecte o grupo em uma sala pelo código (ex.: `MESA-D20`) para sincronizar **Ordem de Iniciativa** e **Feed de Rolagens** em tempo real.
+* **Perfil Personalizável, Amigos Mútuos e Temas:**
+  * Foto própria ou ícone vetorial, código de amigo (`D20-XXXXX`), sistema de **Solicitação de Amizade** mútua (enviar, aceitar e recusar), compartilhamento rápido de ficha e entrada direta na sala do amigo.
+  * Suporte a **Modo Claro / Escuro / Sistema** e **5 Paletas de Cor Personalizáveis** (Carmesim, Arcano, Esmeralda, Dourado e Abissal).
 
-## Get a fresh project
+---
 
-When you're ready, run:
+## Estrutura de Pastas
 
-```bash
-npm run reset-project
+```text
+ficha-rpg-5e/
+├── .github/workflows/       # Automacoes de CI, Deploy Web/OTA e Build Android
+├── assets/images/           # Icone do app (d20), splash screen e favicon
+├── public/fonts/            # Fontes de icones cacheadas para o build Web
+├── scripts/                 # Scripts utilitarios do projeto
+├── src/
+│   ├── app/                 # Rotas do Expo Router (tabs, login, ficha/[id], modais)
+│   ├── components/          # Componentes reutilizaveis (CombatHeader, AtributoCard, UserMenuButton, etc.)
+│   ├── constants/           # Paletas de cores, tipografia, espacamentos e breakpoints (theme.ts)
+│   ├── hooks/               # Hooks de tema e esquema de cores
+│   ├── screens/             # Telas principais (Fichas, Principal, Magias, Lore, Compendio, Perfil, Login)
+│   ├── services/            # Integracao Firebase (Auth, Firestore, Perfil, Mesa) e API JSON 5etools
+│   ├── store/               # Gerenciamento de estado global com Zustand
+│   ├── types/               # Tipagens TypeScript da ficha de D&D 5e
+│   └── utils/               # Calculos de regras 5e, dicionario PT-BR/EN e exportacao PDF/HTML
+├── app.json                 # Configuracao do Expo (nome, icone, pacote Android, EAS Update)
+├── eas.json                 # Perfis de build do EAS (preview APK e production)
+├── firebase.json            # Configuracao do Firebase Hosting e Firestore Rules
+├── firestore.rules          # Regras de seguranca do Cloud Firestore
+└── package.json             # Dependencias e scripts npm
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+---
 
-### Other setup steps
+## Como Rodar Localmente
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+### Pré-requisitos
+* **Node.js** (v20 ou superior)
+* **npm**
+* Para testar no celular sem gerar `.apk`: aplicativo **Expo Go** instalado no Android ou iOS.
 
-## Learn more
+### 1. Instalar dependências
+```powershell
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### 2. Configurar variáveis de ambiente (Firebase)
+Copie o arquivo `.env.example` para `.env.local` e preencha com as credenciais do seu projeto Firebase:
+```powershell
+copy .env.example .env.local
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 3. Iniciar em modo desenvolvimento
+```powershell
+# Rodar o Site Web no navegador (PC)
+npx expo start --web
 
-## Join the community
+# Rodar com QR Code para abrir no Expo Go (Celular)
+npx expo start
 
-Join our community of developers creating universal apps.
+# Limpar cache do Metro caso necessario
+npx expo start --web --clear
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## Validação e Deploy Manual
+
+### Verificações de código
+```powershell
+npx tsc --noEmit        # Verificacao de tipos TypeScript
+npx expo lint           # Lint (ESLint + regras Expo)
+npx expo-doctor         # Diagnostico de dependencias do projeto
+```
+
+### Publicar Site Web e Regras do Firebase
+```powershell
+npx expo export --platform web
+npx firebase-tools deploy --only firestore:rules,hosting
+```
+
+### Publicar Atualização OTA e Novo APK (EAS)
+```powershell
+# Enviar atualizacao rapida (JS/telas/regras) para quem ja tem o APK instalado
+npx eas-cli@latest update --channel preview --message "Descricao da atualizacao"
+
+# Gerar novo instalador .apk na nuvem da Expo
+npx eas-cli@latest build -p android --profile preview
+```
+
+---
+
+## Automação com GitHub Actions
+
+O repositório conta com 3 workflows em `.github/workflows/`:
+1. **`ci.yml`:** Roda `tsc` e `expo lint` automaticamente em todos os Pull Requests e pushes.
+2. **`deploy.yml`:** Ao fazer push na branch `master` (ou `main`), valida o código, exporta o site Web, publica no **Firebase Hosting**, atualiza o **firestore.rules** e envia a atualização **OTA** via **EAS Update** automaticamente.
+3. **`build-android.yml`:** Dispara o build de um novo `.apk` na nuvem da Expo ao criar uma tag de versão (ex.: `v1.1.0`) ou ao clicar em **Run workflow** na aba Actions do GitHub.
+
+### Secrets necessários no GitHub (`Settings > Secrets and variables > Actions`)
+Para que o `deploy.yml` e o `build-android.yml` funcionem automaticamente no GitHub, cadastre os seguintes secrets:
+* `EXPO_TOKEN` (Token de acesso gerado em expo.dev)
+* `FIREBASE_SERVICE_ACCOUNT` (JSON da conta de serviço do Firebase com permissão de Hosting e Firestore)
+* `EXPO_PUBLIC_FIREBASE_API_KEY`
+* `EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN`
+* `EXPO_PUBLIC_FIREBASE_PROJECT_ID`
+* `EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET`
+* `EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+* `EXPO_PUBLIC_FIREBASE_APP_ID`
+* `EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID`
+
+---
+
+## Licença
+
+Consulte o arquivo [LICENSE](LICENSE) neste repositório.
